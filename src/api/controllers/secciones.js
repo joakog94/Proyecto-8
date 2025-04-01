@@ -1,3 +1,4 @@
+const { deleteFile } = require('../../utils/deleteFile')
 const Seccion = require('../models/secciones')
 
 const getSecciones = async (req, res, next) => {
@@ -29,6 +30,9 @@ const postSeccion = async (req, res, next) => {
       )
     }
     const newSeccion = new Seccion(req.body)
+    if (req.file) {
+      newSeccion.imagen = req.file.path
+    }
     const seccionSaved = await newSeccion.save()
     return res.status(201).json(seccionSaved)
   } catch (error) {
@@ -52,6 +56,9 @@ const putSeccion = async (req, res, next) => {
 
     // Obtener la sección actual
     const oldSeccion = await Seccion.findById(id)
+    if (!oldSeccion) {
+      return res.status(404).json({ error: 'Sección no encontrada' })
+    }
 
     // Combinar artículos antiguos y nuevos (si existen)
     const nuevosArticulos = req.body.articulos || []
@@ -61,11 +68,15 @@ const putSeccion = async (req, res, next) => {
         ...nuevosArticulos.map((id) => id.toString())
       ])
     )
-
     // Crear objeto de actualización que incluya TODOS los campos del body
     const updateData = {
-      ...req.body, // Incluye todos los campos enviados (nombre, descripción, etc.)
+      ...req.body,
       articulos: articulosUnicos // Sobrescribe 'articulos' con el array combinado
+    }
+
+    if (req.file) {
+      updateData.imagen = req.file.path
+      deleteFile(oldSeccion.imagen)
     }
 
     // Actualizar el documento
@@ -81,32 +92,12 @@ const putSeccion = async (req, res, next) => {
   }
 }
 
-/* const putSeccion = async (req, res, next) => {
-  try {
-    const { id } = req.params
-    if (req.body.articulos && Array.isArray(req.body.articulos)) {
-      // Eliminar duplicados del array de articulos
-      req.body.articulos = Array.from(
-        new Set(req.body.articulos.map((id) => id.toString()))
-      )
-    }
-
-    const newSeccion = new Seccion(req.body)
-    newSeccion._id = id
-
-    const seccionUpdated = await Seccion.findByIdAndUpdate(id, newSeccion, {
-      new: true
-    })
-    return res.status(200).json(seccionUpdated)
-  } catch (error) {
-    return res.status(404).json('Error en la actualización')
-  }
-} */
-
 const deleteSeccion = async (req, res, next) => {
   try {
     const { id } = req.params
     const seccionDeleted = await Seccion.findByIdAndDelete(id)
+    deleteFile(seccionDeleted.imagen)
+
     return res.status(200).json(seccionDeleted)
   } catch (error) {
     return res.status(404).json('Error en la eliminación')

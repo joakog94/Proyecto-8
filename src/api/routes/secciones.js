@@ -1,4 +1,5 @@
-const { isAuth, isAdmin } = require('../../middlewares/auth')
+const { isAdmin } = require('../../middlewares/auth')
+const upload = require('../../middlewares/file')
 const {
   getSecciones,
   getSeccionById,
@@ -11,8 +12,8 @@ const seccionesRouter = require('express').Router()
 
 seccionesRouter.get('/:id', getSeccionById)
 seccionesRouter.get('/', getSecciones)
-seccionesRouter.post('/', [isAdmin], postSeccion)
-seccionesRouter.put('/:id', [isAdmin], putSeccion)
+seccionesRouter.post('/', [isAdmin], upload.single('imagen'), postSeccion)
+seccionesRouter.put('/:id', [isAdmin], upload.single('imagen'), putSeccion)
 seccionesRouter.delete('/:id', [isAdmin], deleteSeccion)
 
 module.exports = seccionesRouter
