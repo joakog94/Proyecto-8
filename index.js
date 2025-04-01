@@ -6,6 +6,7 @@ const cors = require('cors')
 const mainRouter = require('./src/api/routes/main')
 const cloudinary = require('cloudinary').v2
 
+connectDB()
 const app = express()
 
 cloudinary.config({
@@ -15,9 +16,14 @@ cloudinary.config({
 })
 
 app.use(express.json())
-app.use(cors())
-
-connectDB()
+app.use(
+  cors({
+    origin:
+      'https://proyecto-8-exid0wu5s-joakos-projects.vercel.app/api/v1/articulos', // Permite cualquier origen (para pruebas)
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'Content-Type,Authorization'
+  })
+)
 
 app.use('/api/v1', mainRouter)
 
