@@ -1,93 +1,94 @@
-🐾 API para Gestión de Usuarios, Artículos y Secciones en Tienda de Mascotas
+# 🐾 API para Tienda de Mascotas con Cloudinary
 
-Este proyecto es una API backend construida con Node.js, Express y MongoDB para gestionar secciones y artículos de una tienda de mascotas. Además, incluye autenticación de usuarios mediante bcrypt y jsonwebtoken, permitiendo encriptar contraseñas y asignar diferentes roles a los usuarios.
+API RESTful desarrollada con **Node.js**, **Express** y **MongoDB**, que permite gestionar usuarios, artículos y secciones dentro de una tienda de mascotas.  
+Incluye **subida de imágenes mediante Cloudinary**, autenticación con **JWT**, encriptación de contraseñas y control de roles (admin / usuario).
 
-🚀 Tecnologías Utilizadas
+---
 
-Node.js - Entorno de ejecución
+## 🚀 Tecnologías Utilizadas
 
-Express - Framework para backend
+- **Node.js** – Entorno de ejecución JavaScript
+- **Express** – Framework web para APIs
+- **MongoDB** – Base de datos NoSQL
+- **Mongoose** – Modelado de datos con ODM
+- **bcrypt** – Encriptación de contraseñas
+- **jsonwebtoken (JWT)** – Autenticación basada en tokens
+- **Cloudinary** – Gestión de imágenes
+- **Multer** – Middleware para subida de archivos
 
-MongoDB - Base de datos NoSQL
+---
 
-Mongoose - ODM para modelado de datos
+## 🗂 Endpoints Principales
 
-bcrypt - Encriptación de contraseñas
+### 🏬 Secciones
 
-jsonwebtoken (JWT) - Autenticación de usuarios
+| Método | Endpoint                | Descripción                  |
+| ------ | ----------------------- | ---------------------------- |
+| GET    | `/api/v1/secciones`     | Obtener todas las secciones  |
+| GET    | `/api/v1/secciones/:id` | Obtener sección por ID       |
+| POST   | `/api/v1/secciones`     | Crear nueva sección          |
+| PUT    | `/api/v1/secciones/:id` | Actualizar sección existente |
+| DELETE | `/api/v1/secciones/:id` | Eliminar sección por ID      |
 
-📌 Endpoints
+### 🛒 Artículos
 
-🏬 Secciones
+| Método | Endpoint                           | Descripción                 |
+| ------ | ---------------------------------- | --------------------------- |
+| GET    | `/api/v1/articulos`                | Obtener todos los artículos |
+| GET    | `/api/v1/articulos/:id`            | Obtener artículo por ID     |
+| GET    | `/api/v1/articulos/categoria/:cat` | Filtrar por categoría       |
+| GET    | `/api/v1/articulos/precio/:precio` | Filtrar por precio máximo   |
+| POST   | `/api/v1/articulos`                | Crear nuevo artículo        |
+| PUT    | `/api/v1/articulos/:id`            | Actualizar artículo         |
+| DELETE | `/api/v1/articulos/:id`            | Eliminar artículo           |
 
-GET /api/v1/secciones → Obtiene todas las secciones
+### 👤 Usuarios
 
-GET /api/v1/secciones/:id → Obtiene una sección por su ID
+| Método | Endpoint                    | Descripción                                        |
+| ------ | --------------------------- | -------------------------------------------------- |
+| GET    | `/api/v1/usuarios`          | Obtener todos los usuarios (admin)                 |
+| POST   | `/api/v1/usuarios/register` | Registrar nuevo usuario                            |
+| POST   | `/api/v1/usuarios/login`    | Iniciar sesión y obtener token                     |
+| PUT    | `/api/v1/usuarios/:id`      | Actualizar usuario (solo admin o el mismo usuario) |
+| DELETE | `/api/v1/usuarios/:id`      | Eliminar usuario (solo admin o el mismo usuario)   |
 
-POST /api/v1/secciones → Crea una nueva sección
+---
 
-PUT /api/v1/secciones/:id → Actualiza una sección existente
+## 📘 Esquema de Datos
 
-DELETE /api/v1/secciones/:id → Elimina una sección por su ID
+### Sección
 
-🛒 Artículos
-
-GET /api/v1/articulos → Obtiene todos los artículos
-
-GET /api/v1/articulos/:id → Obtiene un artículo por su ID
-
-GET /api/v1/articulos/categoria/:categoria → Filtra artículos por categoría
-
-GET /api/v1/articulos/precio/:precio → Obtiene artículos cuyo precio sea menor o igual al especificado
-
-POST /api/v1/articulos → Crea un nuevo artículo
-
-PUT /api/v1/articulos/:id → Actualiza un artículo existente
-
-DELETE /api/v1/articulos/:id → Elimina un artículo por su ID
-
-👥 Usuarios
-
-GET /api/v1/users → Obtiene todos los usuarios registrados
-
-POST /api/v1/users/register → Crea un nuevo usuario
-
-POST /api/v1/users/login → Inicia sesión un usuario
-
-PUT /api/v1/users/:id → Actualiza un usuario (solo un administrador puede hacerlo)
-
-DELETE /api/v1/users/:id → Elimina un usuario (solo un administrador o el mismo usuario pueden eliminar su cuenta)
-
-📂 Estructura de Datos
-
-📌 Sección
-
+```json
 {
   "nombre": "PERROS",
   "imagen": "url_imagen",
   "articulos": ["id_articulo1", "id_articulo2"]
 }
+```
 
-⚠️ Nota: El array articulos no permite duplicados
+### Artículo
 
-📌 Artículo
-
+```json
 {
   "nombre": "Cama para perro",
   "imagen": "url_imagen",
   "precio": 100,
   "categoria": "camas"
 }
+```
 
-📌 Usuario
+### Usuario
 
+```json
 {
-  "userName": "ejemploUsuario",
-  "password": "contraseñaEncriptada",
+  "nombreUsuario": "ejemploUsuario",
+  "contraseña": "hashEncriptado",
   "rol": "user"
 }
+```
 
-⚠️ Nota: El rol por defecto es "user", pero puede ser "admin"
+## 🔐 Autenticación y Roles
 
-
-
+- Los endpoints protegidos requieren un header `Authorization: Bearer <token>`.
+- El token se obtiene al hacer login.
+- Hay rutas restringidas a administradores (`admin`) y otras disponibles solo para el propio usuario (`adminOrSelf`).

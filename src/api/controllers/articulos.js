@@ -6,7 +6,7 @@ const getArticulos = async (req, res, next) => {
     const articulos = await Articulo.find()
     return res.status(200).json(articulos)
   } catch (error) {
-    return res.status(404).json('Error en la petición')
+    return res.status(404).json({ Error: 'Error en la petición' })
   }
 }
 
@@ -16,7 +16,7 @@ const getArticuloById = async (req, res, next) => {
     const articulo = await Articulo.findById(id)
     return res.status(200).json(articulo)
   } catch (error) {
-    return res.status(404).json('Error en la petición')
+    return res.status(400).json({ Error: 'No se encontro el articulo' })
   }
 }
 
@@ -26,7 +26,7 @@ const getArticulosByCategory = async (req, res, next) => {
     const articulos = await Articulo.find({ categoria })
     return res.status(200).json(articulos)
   } catch (error) {
-    return res.status(404).json('Error en la petición')
+    return res.status(400).json({ Error: 'Error en la petición' })
   }
 }
 
@@ -36,7 +36,7 @@ const getArticulosByPrice = async (req, res, next) => {
     const articulos = await Articulo.find({ precio: { $lte: precio } })
     return res.status(200).json(articulos)
   } catch (error) {
-    return res.status(404).json('Error en la petición')
+    return res.status(404).json({ Error: 'Error en la petición' })
   }
 }
 
@@ -50,7 +50,7 @@ const postArticulo = async (req, res, next) => {
     const articuloSaved = await newArticulo.save()
     return res.status(201).json(articuloSaved)
   } catch (error) {
-    return res.status(404).json('Error en la petición de subida')
+    return res.status(404).json({ Error: 'No se pudo subir articulo' })
   }
 }
 
@@ -70,7 +70,7 @@ const putArticulo = async (req, res, next) => {
     })
     return res.status(200).json(articuloUpdated)
   } catch (error) {
-    return res.status(404).json('Error en la petición')
+    return res.status(400).json({ Error: 'No se pudo actualizar articulo' })
   }
 }
 
@@ -81,7 +81,7 @@ const deleteArticulo = async (req, res, next) => {
     deleteFile(articuloDeleted.imagen)
     return res.status(200).json(articuloDeleted)
   } catch (error) {
-    return res.status(404).json('Error en la petición')
+    return res.status(404).json({ Error: 'No se pudo borrar el articulo' })
   }
 }
 

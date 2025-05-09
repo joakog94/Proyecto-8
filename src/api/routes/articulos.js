@@ -1,4 +1,4 @@
-const { isAuth, isAdmin } = require('../../middlewares/auth')
+const { isAuth, isAdminOrSelf } = require('../../middlewares/auth')
 const upload = require('../../middlewares/file')
 const {
   getArticulos,
@@ -17,7 +17,12 @@ articulosRouter.get('/categoria/:categoria', getArticulosByCategory)
 articulosRouter.get('/:id', getArticuloById)
 articulosRouter.get('/', getArticulos)
 articulosRouter.post('/', [isAuth], upload.single('imagen'), postArticulo)
-articulosRouter.put('/:id', [isAdmin], upload.single('imagen'), putArticulo)
-articulosRouter.delete('/:id', [isAdmin], deleteArticulo)
+articulosRouter.put(
+  '/:id',
+  [isAdminOrSelf],
+  upload.single('imagen'),
+  putArticulo
+)
+articulosRouter.delete('/:id', [isAdminOrSelf], deleteArticulo)
 
 module.exports = articulosRouter

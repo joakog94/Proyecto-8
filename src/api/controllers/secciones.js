@@ -6,7 +6,7 @@ const getSecciones = async (req, res, next) => {
     const secciones = await Seccion.find().populate('articulos')
     return res.status(200).json(secciones)
   } catch (error) {
-    return res.status(404).json('Error en la petición')
+    return res.status(404).json({ Error: 'Error en la petición' })
   }
 }
 
@@ -16,7 +16,7 @@ const getSeccionById = async (req, res, next) => {
     const seccion = await Seccion.findById(id).populate('articulos')
     return res.status(200).json(seccion)
   } catch (error) {
-    return res.status(404).json('Error en la petición')
+    return res.status(404).json({ Error: 'Error en la petición' })
   }
 }
 
@@ -36,7 +36,7 @@ const postSeccion = async (req, res, next) => {
     const seccionSaved = await newSeccion.save()
     return res.status(201).json(seccionSaved)
   } catch (error) {
-    return res.status(404).json('Error en la petición de posteo')
+    return res.status(404).json({ Error: 'Error creando la sección' })
   }
 }
 
@@ -54,13 +54,11 @@ const putSeccion = async (req, res, next) => {
         .json({ error: "El campo 'articulos' debe ser un array" })
     }
 
-    // Obtener la sección actual
     const oldSeccion = await Seccion.findById(id)
     if (!oldSeccion) {
       return res.status(404).json({ error: 'Sección no encontrada' })
     }
 
-    // Combinar artículos antiguos y nuevos (si existen)
     const nuevosArticulos = req.body.articulos || []
     const articulosUnicos = Array.from(
       new Set([
@@ -68,7 +66,7 @@ const putSeccion = async (req, res, next) => {
         ...nuevosArticulos.map((id) => id.toString())
       ])
     )
-    // Crear objeto de actualización que incluya TODOS los campos del body
+
     const updateData = {
       ...req.body,
       articulos: articulosUnicos // Sobrescribe 'articulos' con el array combinado
@@ -79,16 +77,14 @@ const putSeccion = async (req, res, next) => {
       deleteFile(oldSeccion.imagen)
     }
 
-    // Actualizar el documento
-    const seccionUpdated = await Seccion.findByIdAndUpdate(
-      id,
-      updateData, // <-- Enviamos todo el objeto de actualización
-      { new: true, runValidators: true } // Opciones
-    ).populate('articulos')
+    const seccionUpdated = await Seccion.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true
+    }).populate('articulos')
 
     return res.status(200).json(seccionUpdated)
   } catch (error) {
-    return res.status(404).json('Error en la petición')
+    return res.status(404).json({ Error: 'Error actualizando la sección' })
   }
 }
 
@@ -100,7 +96,7 @@ const deleteSeccion = async (req, res, next) => {
 
     return res.status(200).json(seccionDeleted)
   } catch (error) {
-    return res.status(404).json('Error en la eliminación')
+    return res.status(404).json({ Error: 'No se pudo eliminar la sección' })
   }
 }
 
